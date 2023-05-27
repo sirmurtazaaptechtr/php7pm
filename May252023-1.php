@@ -19,6 +19,7 @@
         //     }
         //     echo "<p>$x</p>"; 
         // }
+        $arr = [];
         $num1 = 11;
         $num2 = 20;
         $flag = 1;
@@ -29,17 +30,26 @@
                 if($num%$dvr == 0)
                 {
                     $flag = 0;
-                    break;
+                    array_push($arr,$dvr);
+                    // echo "<p>$num is divisible by $dvr</p>";
+                    // break;
                 }
             }
             if($flag == 1)
             {
                 echo "<p>$num</p>";
             }
+            else{
+                echo"<p>$num is not prime because it is divisible by : ";
+                foreach($arr as $values){
+                    echo "$values ";    
+                }
+                echo "</p>";
+                $arr = [];
+
+            }
             $flag = 1;
         }
-        
-
         #__________________________________________________
         $tab = 7;
         $st = 1;
