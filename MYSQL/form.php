@@ -1,6 +1,6 @@
 <?php
-    require('connection.inc.php');
-    require('functions.inc.php');
+require('connection.inc.php');
+require('functions.inc.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +17,8 @@
 </head>
 
 <body>
+
+
     <?php
     // define variables and set to empty values
     $nameErr = $emailErr = $genderErr = $websiteErr = "";
@@ -66,7 +68,7 @@
         }
     }
 
-    
+
     ?>
 
     <h2>PHP Form Validation Example</h2>
@@ -89,21 +91,62 @@
         <input type="radio" name="gender" <?php if (isset($gender) && $gender == "other") echo "checked"; ?> value="other">Other
         <span class="error">* <?php echo $genderErr; ?></span>
         <br><br>
-        <input type="submit" name="submit" value="Submit">        
+        <input type="submit" name="submit" value="Submit">
         <input type="reset" name="reset" value="Clear">
     </form>
-
-    <?php        
-        if(isset($_POST['submit'])){
-            if(empty($nameErr)&& empty($emailErr)&& empty($genderErr)&& empty($websiteErr)){
-                // this block will be executed when there is no error in the form
-
-                $submit_sql = "INSERT INTO `formstbl` (`Name`, `Email`, `Website`, `Comment`, `Gender`) VALUES ('$name', '$email', '$website', '$comment', '$gender')";
-                mysqli_query($conn,$submit_sql);
-            }
+    <?php
+    if (isset($_GET['type'])) {
+        if (test_input($_GET['type']) == 'delete') {
+            $delID = test_input($_GET['id']);
+            $delete_sql = "DELETE FROM `formstbl` WHERE ID = $delID";
+            mysqli_query($conn, $delete_sql);
         }
+    }
+    if (isset($_POST['submit'])) {
+        if (empty($nameErr) && empty($emailErr) && empty($genderErr) && empty($websiteErr)) {
+            // this block will be executed when there is no error in the form
+
+            $submit_sql = "INSERT INTO `formstbl` (`Name`, `Email`, `Website`, `Comment`, `Gender`) VALUES ('$name', '$email', '$website', '$comment', '$gender')";
+            mysqli_query($conn, $submit_sql);
+        }
+    }    
+    $display_sql = "SELECT * FROM `formstbl` ORDER BY `Name`";
+    $res = mysqli_query($conn, $display_sql);
+    pr($_GET);      
     ?>
-
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Sr.no</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Website</th>
+                <th>Comment</th>
+                <th>Date Modified</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $srno = 1;
+            while ($rows = mysqli_fetch_assoc($res)) {
+                echo "<tr>";
+                echo "<td>" . $srno . "</td>";
+                echo "<td>" . $rows['ID'] . "</td>";
+                echo "<td>" . $rows['Name'] . "</td>";
+                echo "<td>" . $rows['Gender'] . "</td>";
+                echo "<td>" . $rows['Email'] . "</td>";
+                echo "<td>" . $rows['Website'] . "</td>";
+                echo "<td>" . $rows['Comment'] . "</td>";
+                echo "<td>" . $rows['Date'] . "</td>";
+                echo '<td><a href="?type=delete&id=' . $rows['ID'] . '">Delete</a></td>';
+                echo "</tr>";
+                $srno++;
+            }            
+            ?>
+        </tbody>
+    </table>
 </body>
-
 </html>
